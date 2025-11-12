@@ -1,7 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.security.PublicKey;
-import java.util.HashSet;
 
 public final class Player {
     public ScoringMethod scoringMethod1;

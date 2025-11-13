@@ -1,6 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-public class GridPositionAlternateImplementation {
+public final class GridPositionAlternateImplementation {
     private Coordinate x;
     private Coordinate y;
 

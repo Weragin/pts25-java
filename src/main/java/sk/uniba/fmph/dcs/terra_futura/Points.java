@@ -7,7 +7,7 @@ public final class Points {
     public Points(final int p) {
         this.points = p;
     }
-
+    public int getPoints() {
         return points;
     }
 }

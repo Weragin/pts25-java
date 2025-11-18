@@ -1,7 +1,10 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-public class MoveCard {
-    public static boolean moveCard(final int index, final Pile pile, final GridPosition gridCoordinate, final Grid grid) {
+public final class MoveCard {
+    private MoveCard() {
+        throw new AssertionError("Cannot instantiate utility class");
+    }
+    static boolean moveCard(final int index, final Pile pile, final GridPosition gridCoordinate, final Grid grid) {
 
         if (!grid.canPutCard(gridCoordinate)) {
            return false;

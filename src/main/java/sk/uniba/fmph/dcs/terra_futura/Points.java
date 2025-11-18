@@ -8,7 +8,6 @@ public final class Points {
         this.points = p;
     }
 
-    public int getPoints() {
         return points;
     }
 }

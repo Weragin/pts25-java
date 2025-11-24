@@ -11,7 +11,10 @@ public class Game implements TerraFuturaInterface {
     private final List<Integer> players;
     private int onTurn;
     private int startingPlayer;
-    private int turnNumber = 0;
+    private int turnNumber = FIRST_TURN;
+
+    private static final int FIRST_TURN = 1;
+    private static final int LAST_TURN = 9;
 
     private final Pile pileI;
     private final Pile pileII;
@@ -57,10 +60,11 @@ public class Game implements TerraFuturaInterface {
 
     @Override
     public boolean discardLastCardFromDeck(int playerId, Deck deck) {
+        // wrong state
         if (state != GameState.TakeCardNoCardDiscarded) {
             return false;
         }
-
+        // wrong player
         if (playerId != onTurn) {
             return false;
         }
@@ -72,10 +76,55 @@ public class Game implements TerraFuturaInterface {
         return true;
     }
 
+
+
     @Override
-    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, GridPosition otherCard) {
+    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, Card otherCard) {
+        // activate card with assistance
+        // wrong state
+        if (state != GameState.ActivateCard && state != GameState.TakeCardCardDiscarded && state != GameState.TakeCardNoCardDiscarded) {
+            return;
+        }
+
+        // wrong player
         if (playerId != onTurn) {
-            return false;
+            return;
+        }
+        Player nowPlaying = playerReferences.get(playerId);
+        // card has no assistance, then we cant assist
+        if (!card.hasAssistance()) {
+            return;
+        }
+        // wrong turn
+        if (turnNumber < FIRST_TURN || turnNumber > LAST_TURN) {
+            return;
+        }
+
+        if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs, pollution)) {
+                state = GameState.SelectReward;
+        }
+    }
+
+    @Override
+    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution) {
+        // activate card without assistance
+        // wrong state
+        if (state != GameState.ActivateCard && state != GameState.TakeCardCardDiscarded && state != GameState.TakeCardNoCardDiscarded) {
+            return;
+        }
+
+        // not player on turn
+        if (playerId != onTurn) {
+            return;
+        }
+        // wrong turn
+        if (turnNumber < FIRST_TURN || turnNumber > LAST_TURN) {
+            return;
+        }
+
+        Player nowPlaying = playerReferences.get(playerId);
+        if (ProcessAction.activateCard(card, nowPlaying.getGrid(), inputs, outputs, pollution)) {
+                state = GameState.ActivateCard;
         }
     }
 
@@ -89,8 +138,11 @@ public class Game implements TerraFuturaInterface {
             return;
         }
 
+
+
         state = GameState.SelectReward;
         // Todo: Conenct to select reward
+
 
     }
 

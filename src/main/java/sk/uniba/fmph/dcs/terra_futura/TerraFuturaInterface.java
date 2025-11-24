@@ -9,7 +9,8 @@ import java.util.List;
 public interface TerraFuturaInterface {
     boolean takeCard(int playerId, CardSource source, GridPosition gridCoordinate);
     boolean discardLastCardFromDeck(int playerId, Deck deck);
-    void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, GridPosition otherCard);
+    void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, Card otherCard);
+    void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution);
     void selectReward(int playerId, Resource resource);
     boolean turnFinished(int playerId);
     boolean selectActivationPattern(int playerId, Card card);

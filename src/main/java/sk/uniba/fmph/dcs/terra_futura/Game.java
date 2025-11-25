@@ -157,9 +157,12 @@ public class Game implements TerraFuturaInterface {
         }
 
         state = GameState.Finish;
+        // get next player,
+        getNextPlayer();
         return true;
 
     }
+
 
     @Override
     public boolean selectActivationPattern(int playerId, Card card) {
@@ -185,5 +188,18 @@ public class Game implements TerraFuturaInterface {
         }
         state = GameState.SelectScoringMethod;
         return true;
+    }
+
+    private boolean getNextPlayer(){
+        int playerIndex = players.indexOf(onTurn);
+
+        onTurn = players.get((playerIndex+1) %  players.size());
+
+        if(onTurn == startingPlayer){
+            turnNumber++;
+        }
+
+        return true;
+
     }
 }

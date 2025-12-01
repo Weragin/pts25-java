@@ -9,12 +9,9 @@ import java.util.ArrayList;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 
-import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
-import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
-
 import static org.junit.Assert.*;
 
-class ActivateGridFake implements InterfaceActivateGrid {
+class ActivateGridFake implements ActivateGrid {
     ArrayList<SimpleEntry<Integer, Integer>> activations;
 
     public ActivateGridFake() {

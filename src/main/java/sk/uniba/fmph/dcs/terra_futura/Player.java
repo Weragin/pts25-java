@@ -1,12 +1,15 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 
-public final class Player {
+import java.util.Map;
+
+public final class Player implements TerraFuturaObserver {
     private ScoringMethod scoringMethod1;
     private ScoringMethod scoringMethod2;
     private ActivationPattern activationPattern1;
     private ActivationPattern activationPattern2;
     private Grid grid;
+    private String gameState;
 
     public Player() {
         this.scoringMethod1 = new ScoringMethod();
@@ -16,6 +19,7 @@ public final class Player {
         this.activationPattern2 = new ActivationPattern();
         */
         this.grid = new Grid();
+        this.gameState = "";
     }
 
     private ScoringMethod getScoringMethod1() {
@@ -36,5 +40,11 @@ public final class Player {
 
     private Grid getGrid() {
         return this.grid;
+    }
+
+
+    @Override
+    public void notify(Map<Integer, String> gameState) {
+
     }
 }

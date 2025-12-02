@@ -93,21 +93,25 @@ public class Card implements CardInterface {
     }
 
     public String state() {
-        StringBuilder resourcesState = new StringBuilder();
-        for (Resource resource : resourceStore)
-            resourcesState.append(resource.toString()).append(" ");
+        org.json.JSONObject json = new org.json.JSONObject();
 
-        // Prepare the effects state
-        StringBuilder effectsState = new StringBuilder();
-        if (effectStore[0] != null)
-            effectsState.append("Upper: ").append(effectStore[0]).append(" ");
-        if (effectStore[1] != null)
-            effectsState.append("Lower: ").append(effectStore[1]).append(" ");
-        if (assistanceEffect != null)
-            effectsState.append("Assistance: ").append(assistanceEffect).append(" ");
+        json.put("maxPollutionHealth", maxPollutionHealth);
+        json.put("maxResourceCount", maxResourceCount);
 
-        // Return the combined state string
-        return String.format("Card{Pollution: %d, Resources: [%s], Effects: [%s]}",
-                Collections.frequency(resourceStore, Resource.Pollution), resourcesState, effectsState);
+        org.json.JSONArray resources = new org.json.JSONArray();
+        for (Resource r : resourceStore) {
+            resources.put(r.name());
+        }
+        json.put("resources", resources);
+
+        org.json.JSONArray effects = new org.json.JSONArray();
+        for (Effect e : effectStore) {
+            effects.put(e == null ? org.json.JSONObject.NULL : e.toString());
+        }
+        json.put("effects", effects);
+
+        json.put("assistanceEffect", assistanceEffect == null ? org.json.JSONObject.NULL : assistanceEffect.toString());
+
+        return json.toString();
     }
 }

@@ -1,8 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-public class Grid {
-    public Grid() {
-        // todo: implement this, it is just aplaceholder so we dont get linter error
-        throw new RuntimeException("Not implemented");
-    }
+public interface Grid {
+    Card getCard(GridPosition coordinate);
+    boolean canBeActivated(GridPosition coordinate);
+    void putCard(GridPosition coordinate, Card card);
+    void setActivated(GridPosition coordinates);
 }

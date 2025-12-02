@@ -6,10 +6,10 @@ import java.util.stream.Stream;
 public class Card {
     private final int maxPollutionHealth;
 
-    private List<Resource> resourceStore;
+    private final List<Resource> resourceStore;
     private final int maxResourceCount;
 
-    private Effect[] effectStore;
+    private final Effect[] effectStore;
     private Effect assistanceEffect;
 
     public Card(int maxResourceCount, int maxPollutionHealth) {
@@ -32,12 +32,12 @@ public class Card {
     }
 
     public int getPollutionHealth() {
-        return Math.max(this.maxPollutionHealth - Collections.frequency(resourceStore, Resource.Pollution), 0);
+        return Math.max(maxPollutionHealth - Collections.frequency(resourceStore, Resource.Pollution), 0);
     }
 
     public boolean canGetResources(List<Resource> resources) {
         for (Resource resource : new HashSet<>(resources))
-            if (Collections.frequency(resources, resource) > Collections.frequency(this.resourceStore, resource))
+            if (Collections.frequency(resources, resource) > Collections.frequency(resourceStore, resource))
                 return false;
         return true;
     }
@@ -53,10 +53,14 @@ public class Card {
         return takenResources;
     }
 
+    public List<Resource> listResources() {
+        return Collections.unmodifiableList(this.resourceStore);
+    }
+
     public boolean canPutResources(List<Resource> resources) {
         List<Resource> theoreticalJoinedResources = Stream.concat(resourceStore.stream(), resources.stream()).toList();
         List<Resource> withoutPollution = theoreticalJoinedResources.stream().filter(r -> r != Resource.Pollution).toList();
-        return withoutPollution.size() <= this.maxResourceCount && theoreticalJoinedResources.size() - withoutPollution.size() <= this.maxPollutionHealth;
+        return withoutPollution.size() <= maxResourceCount && theoreticalJoinedResources.size() - withoutPollution.size() <= maxPollutionHealth;
     }
 
     public void putResources(List<Resource> resources) {
@@ -80,7 +84,11 @@ public class Card {
     }
 
     public boolean hasAssistance() {
-        return this.assistanceEffect != null;
+        return assistanceEffect != null;
+    }
+
+    public void giveAssistance(Effect effect) {
+        assistanceEffect = effect;
     }
 
     public String state() {

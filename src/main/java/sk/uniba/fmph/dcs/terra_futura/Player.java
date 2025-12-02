@@ -2,19 +2,17 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 
 public final class Player {
-    private ScoringMethod scoringMethod1;
-    private ScoringMethod scoringMethod2;
-    private ActivationPattern activationPattern1;
-    private ActivationPattern activationPattern2;
-    private Grid grid;
+    private final ScoringMethod scoringMethod1;
+    private final ScoringMethod scoringMethod2;
+    private final ActivationPattern activationPattern1;
+    private final ActivationPattern activationPattern2;
+    private final Grid grid;
 
-    public Player() {
-        this.scoringMethod1 = new ScoringMethod();
-        this.scoringMethod2 = new ScoringMethod();
-        /* can use to do because it hurts the linter: add correct arguments for the activation patterns that this should contain
-        this.activationPattern1 = new ActivationPattern();
-        this.activationPattern2 = new ActivationPattern();
-        */
+    public Player(ScoringMethod scoringMethod1, ScoringMethod scoringMethod2,  ActivationPattern activationPattern1, ActivationPattern activationPattern2) {
+        this.scoringMethod1 = scoringMethod1;
+        this.scoringMethod2 = scoringMethod2;
+        this.activationPattern1 = activationPattern1;
+        this.activationPattern2 = activationPattern2;
         this.grid = new Grid();
     }
 

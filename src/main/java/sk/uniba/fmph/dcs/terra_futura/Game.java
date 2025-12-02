@@ -20,7 +20,14 @@ public class Game implements TerraFuturaInterface {
     private final Pile pileII;
     private final Map<Integer, Player> playerReferences;
 
-    public Game(final List<Integer> players, final int startingPlayer) {
+    private final SelectReward selectReward;
+
+    private int assistingPlayer = -1;
+
+    public Game(final List<Integer> players,
+                final Map<Integer, Pair<ActivationPattern,ActivationPattern>> playerActivationPatterns,
+                final Map<Integer, Pair<ScoringMethod,ScoringMethod>> playerScoringMethods,
+                final int startingPlayer) {
         state = GameState.TakeCardNoCardDiscarded;
         this.players = players;
         this.startingPlayer = startingPlayer;
@@ -32,8 +39,19 @@ public class Game implements TerraFuturaInterface {
 
         playerReferences = new HashMap<>();
         for (int player : players) {
-            playerReferences.put(player, new Player()); // todo: add activation pattern grid and scoring method
+            if(!playerActivationPatterns.containsKey(player) || !playerScoringMethods.containsKey(player)) {
+                throw new IllegalArgumentException("Player " + player + " has no scoringmethods or activationpattern");
+            }
+
+            playerReferences.put(player, new Player(
+                    playerScoringMethods.get(player).getLeft(),
+                    playerScoringMethods.get(player).getRight(),
+                    playerActivationPatterns.get(player).getLeft(),
+                    playerActivationPatterns.get(player).getRight())
+            );
         }
+        // TODO SOMETHING WITH OBSERVERS?
+        selectReward = new SelectReward();
     }
 
     @Override
@@ -42,7 +60,6 @@ public class Game implements TerraFuturaInterface {
             return false;
         }
 
-        // todo: if could take card return 0 and stay in the same state
         if (playerId != onTurn) {
             return false;
         }
@@ -69,7 +86,6 @@ public class Game implements TerraFuturaInterface {
             return false;
         }
 
-        // REVIEW: does this breaks the single responsibility prinicple?
         Pile pileToDiscardFrom = (deck == Deck.I) ?  pileI : pileII;
         pileToDiscardFrom.removeLastCard();
         state = GameState.TakeCardCardDiscarded;
@@ -102,6 +118,7 @@ public class Game implements TerraFuturaInterface {
 
         if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs, pollution)) {
                 state = GameState.SelectReward;
+                assistingPlayer = otherPlayerId;
         }
     }
 
@@ -130,18 +147,23 @@ public class Game implements TerraFuturaInterface {
 
     @Override
     public void selectReward(int playerId, Resource resource) {
-        if (state != GameState.ActivateCard) {
+
+        if (state != GameState.SelectReward) {
            return;
         }
-
-        if (playerId != onTurn) {
+        // the assisting player should get the reward
+        if (playerId != assistingPlayer) {
             return;
         }
 
+        if(!selectReward.canSelectReward(playerId, resource)) {
+            return;
+        }
 
-
-        state = GameState.SelectReward;
-        // Todo: Conenct to select reward
+        if(selectReward.selectReward(playerId, resource)){
+            state = GameState.ActivateCard;
+            assistingPlayer = -1;
+        }
 
 
     }
@@ -159,6 +181,14 @@ public class Game implements TerraFuturaInterface {
         state = GameState.Finish;
         // get next player,
         getNextPlayer();
+
+        if(turnNumber > LAST_TURN){
+            state = GameState.SelectActivationPattern;
+        }
+        else{
+            state = GameState.TakeCardNoCardDiscarded;
+        }
+
         return true;
 
     }

@@ -1,11 +1,11 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
 
 
 

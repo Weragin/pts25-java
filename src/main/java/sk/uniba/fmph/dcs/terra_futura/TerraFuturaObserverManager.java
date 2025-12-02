@@ -1,6 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.util.*;
+import java.util.Map;
 
 public interface TerraFuturaObserverManager<T> {
     void addObserver(T observer);

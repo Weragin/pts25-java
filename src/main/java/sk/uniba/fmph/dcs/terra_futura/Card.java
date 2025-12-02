@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class Card {
+public class Card implements CardInterface {
     private final int maxPollutionHealth;
 
     private final List<Resource> resourceStore;
@@ -52,8 +52,9 @@ public class Card {
         return takenResources;
     }
 
-    public List<Resource> getResources() {
-        return Collections.unmodifiableList(this.resourceStore);
+    @Override
+    public void getResources(List<Resource> resources) {
+        resources.addAll(resourceStore);
     }
 
     public boolean canPutResources(List<Resource> resources) {
@@ -62,6 +63,7 @@ public class Card {
         return withoutPollution.size() <= maxResourceCount && theoreticalJoinedResources.size() - withoutPollution.size() <= maxPollutionHealth;
     }
 
+    @Override
     public void putResources(List<Resource> resources) {
         for (Resource resource : resources) {
             if (!canPutResources(List.of(resource)))

@@ -8,7 +8,7 @@ public final class Player implements TerraFuturaObserver {
     private ScoringMethod scoringMethod2;
     private ActivationPattern activationPattern1;
     private ActivationPattern activationPattern2;
-    private Grid grid;
+    private GridInterface grid;
     private String gameState;
 
     public Player() {
@@ -38,7 +38,7 @@ public final class Player implements TerraFuturaObserver {
         return this.activationPattern2;
     }
 
-    private Grid getGrid() {
+    private GridInterface getGrid() {
         return this.grid;
     }
 

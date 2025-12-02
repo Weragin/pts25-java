@@ -2,8 +2,8 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 import org.json.JSONObject;
 
-import javax.swing.JScrollBar;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScoringMethod {
     private final Grid grid;
@@ -30,23 +30,17 @@ public class ScoringMethod {
         return grid.getCard(pos) != null;
     }
 
-    private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos) {
+    private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos, AtomicInteger pollutionCount) {
         List<Resource> resourcesOnCard = new ArrayList<>();
         Card card = grid.getCard(pos);
         card.getResources(resourcesOnCard);
-        for (Resource r : resourcesOnCard) {
-            playersResources.replace(r, playersResources.get(r)+1);
-        }
-    }
-
-    private void countPollutionOnCard(Map<Resource,Integer> playersResources, GridPosition pos) {
-        List<Resource> resourcesOnCard = new ArrayList<>();
-        Card card = grid.getCard(pos);
-        card.getResources(resourcesOnCard);
-        for (Resource r : resourcesOnCard) {
-            if (r == Resource.Polution) {
-                playersResources.replace(r,playersResources.get(Resource.Polution)+1);
+        if (grid.canBeActivated(pos)) {
+            for (Resource r : resourcesOnCard) {
+                playersResources.put(r, playersResources.get(r)+1);
             }
+        }
+        if (resourcesOnCard.contains(Resource.Polution)) {
+            pollutionCount.incrementAndGet();
         }
     }
 
@@ -56,16 +50,13 @@ public class ScoringMethod {
         for (Resource r : Resource.values()) {
             playersResources.put(r,0);
         }
+        AtomicInteger pollutionCount = new AtomicInteger(0);
 
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
                 GridPosition pos = new GridPosition(x,y);
-                if (canGetCard(pos) && grid.canBeActivated(pos)) {
-                    countResourcesOnCard(playersResources, pos);
-                } else if (canGetCard(pos)) {
-                    countPollutionOnCard(playersResources, pos);
-                } else {
-                    continue;
+                if (canGetCard(pos)) {
+                    countResourcesOnCard(playersResources, pos, pollutionCount);
                 }
             }
         }
@@ -85,7 +76,7 @@ public class ScoringMethod {
         total += playersResources.get(Resource.Bulb)*5;
         total += playersResources.get(Resource.Gear)*5;
         total += playersResources.get(Resource.Car)*6;
-        total -= playersResources.get(Resource.Polution);
+        total -= pollutionCount.get();
 
         calculatedTotal = new Points(total);
     }
@@ -95,7 +86,7 @@ public class ScoringMethod {
 
         jsonObject.put("Resources: ", resources.toString());
         jsonObject.put("Required number of resources: ", requiredNumbersOfResources.toString());
-        jsonObject.put("Points per combination: ", pointsPerCombination);
+        jsonObject.put("Points per combination: ", pointsPerCombination.getPoints());
         jsonObject.put("Calculated total: ", calculatedTotal == null ? JSONObject.NULL : calculatedTotal.getPoints());
 
         return jsonObject.toString();

@@ -35,14 +35,14 @@ public class Card {
         return Math.max(maxPollutionHealth - Collections.frequency(resourceStore, Resource.Pollution), 0);
     }
 
-    public boolean canGetResources(List<Resource> resources) {
+    public boolean canTakeResources(List<Resource> resources) {
         for (Resource resource : new HashSet<>(resources))
             if (Collections.frequency(resources, resource) > Collections.frequency(resourceStore, resource))
                 return false;
         return true;
     }
 
-    public List<Resource> getResources(List<Resource> resources) {
+    public List<Resource> takeResources(List<Resource> resources) {
         List<Resource> takenResources = new ArrayList<>();
         for (Resource resource : resources) {
             if (!resourceStore.contains(resource))
@@ -53,7 +53,7 @@ public class Card {
         return takenResources;
     }
 
-    public List<Resource> listResources() {
+    public List<Resource> getResources() {
         return Collections.unmodifiableList(this.resourceStore);
     }
 

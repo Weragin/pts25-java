@@ -31,10 +31,6 @@ public class Card {
         this.effectStore[1] = lowerEffect;
     }
 
-    public int getPollutionHealth() {
-        return Math.max(maxPollutionHealth - Collections.frequency(resourceStore, Resource.Pollution), 0);
-    }
-
     public boolean canTakeResources(List<Resource> resources) {
         for (Resource resource : new HashSet<>(resources))
             if (Collections.frequency(resources, resource) > Collections.frequency(resourceStore, resource))
@@ -92,21 +88,21 @@ public class Card {
     }
 
     public String state() {
-        StringBuilder resourcesState = new StringBuilder("Resources: ");
+        StringBuilder resourcesState = new StringBuilder();
         for (Resource resource : resourceStore)
             resourcesState.append(resource.toString()).append(" ");
 
         // Prepare the effects state
-        StringBuilder effectsState = new StringBuilder("Effects: ");
+        StringBuilder effectsState = new StringBuilder();
         if (effectStore[0] != null)
-            effectsState.append("Upper Effect: ").append(effectStore[0].toString()).append(" ");
+            effectsState.append("Upper: ").append(effectStore[0]).append(" ");
         if (effectStore[1] != null)
-            effectsState.append("Lower Effect: ").append(effectStore[1].toString()).append(" ");
+            effectsState.append("Lower: ").append(effectStore[1]).append(" ");
         if (assistanceEffect != null)
-            effectsState.append("Assistance Effect: ").append(assistanceEffect.toString()).append(" ");
+            effectsState.append("Assistance: ").append(assistanceEffect).append(" ");
 
         // Return the combined state string
-        return String.format("Pollution Health: %d, Max Resource Count: %d, %s, %s",
-                getPollutionHealth(), maxResourceCount, resourcesState.toString(), effectsState.toString());
+        return String.format("Card{Pollution: %d, Resources: [%s], Effects: [%s]}",
+                Collections.frequency(resourceStore, Resource.Pollution), resourcesState, effectsState);
     }
 }

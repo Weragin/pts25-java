@@ -29,8 +29,7 @@ public class ProcessActionBase {
 
     private static boolean canPutResources(Grid grid,
                                            Map<GridPosition, List<Resource>> gridResourcesOut,
-                                           Map<GridPosition, List<Resource>> gridResourcesPollution,
-                                           List<GridPosition> pollution){
+                                           Map<GridPosition, List<Resource>> gridResourcesPollution){
 
         for(GridPosition gridPosition: gridResourcesOut.keySet()){
             Card gridCard = grid.getCard(gridPosition);
@@ -42,7 +41,7 @@ public class ProcessActionBase {
             }
         }
 
-        for(GridPosition gridPosition: pollution){
+        for(GridPosition gridPosition: gridResourcesPollution.keySet()){
             Card gridCard = grid.getCard(gridPosition);
             if(gridCard == null || !gridCard.canPutResources(gridResourcesPollution.get(gridPosition))){
                 return false;
@@ -66,6 +65,13 @@ public class ProcessActionBase {
         return true;
     }
 
+    private static List<Resource> convertToResources(List<Pair<Resource, GridPosition>> listOfPairs){
+        List<Resource> resources = new ArrayList<>();
+        for (Pair<Resource, GridPosition> pair : listOfPairs) {
+            resources.add(pair.getLeft());
+        }
+        return resources;
+    }
 
     public static boolean activateCard(final Card card,
                                 final Grid grid, List<Pair<Resource,GridPosition>> inputs,
@@ -83,14 +89,14 @@ public class ProcessActionBase {
         Map<GridPosition, List<Resource>> gridResourcesIn = new HashMap<GridPosition, List<Resource>>();
         Map<GridPosition, List<Resource>> gridResourcesOut = new HashMap<GridPosition, List<Resource>>();
         Map<GridPosition, List<Resource>> gridResourcesPollution = new HashMap<GridPosition, List<Resource>>();
-
+        // count resources on the grid positions
         for(Pair<Resource,GridPosition> input: inputs){
             if(!gridResourcesIn.containsKey(input.getRight())){
                 gridResourcesIn.put(input.getRight(),new ArrayList<>());
             }
             gridResourcesIn.get(input.getRight()).add(input.getLeft());
         }
-        // count resources on the cards
+        
         for(Pair<Resource,GridPosition> output: outputs){
             if(!gridResourcesOut.containsKey(output.getRight())){
                 gridResourcesOut.put(output.getRight(),new ArrayList<>());
@@ -106,19 +112,21 @@ public class ProcessActionBase {
         }
 
 
-
         if(assistanceCall && !card.hasAssistance()){
             return false;
         }
 
+        if(!canGetResources(grid, gridResourcesIn) || 
+           !canPutResources(grid, gridResourcesOut, gridResourcesPollution)){
+            return false;
+        }
 
-        putAllResources(grid,gridResourcesIn,gridResourcesOut,gridResourcesPollution);
-
-
-
+        if(card.check(convertToResources(inputs), convertToResources(outputs), pollution.size()) ||
+           card.checkLower(convertToResources(inputs), convertToResources(outputs), pollution.size())){
+            putAllResources(grid,gridResourcesIn,gridResourcesOut,gridResourcesPollution);
+        }
 
 
         return true;
-
     }
 }

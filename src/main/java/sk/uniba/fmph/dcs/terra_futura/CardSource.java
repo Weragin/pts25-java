@@ -1,8 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 public final class CardSource {
-    private Deck deck;
-    private int index;
+    private final Deck deck;
+    private final int index;
 
     private static final int MIN_INDEX = 1;
     private static final int MAX_INDEX = 4;
@@ -19,17 +19,8 @@ public final class CardSource {
         return deck;
     }
 
-    public void setDeck(final Deck deck) {
-        this.deck = deck;
-    }
-
     public int getIndex() {
         return index;
     }
-
-    public void setIndex(final int index) {
-        this.index = index;
-    }
-
 
 }

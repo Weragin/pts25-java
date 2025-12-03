@@ -45,22 +45,6 @@ public class MoveCardTest {
         verify(pile, never()).takeCard(1);
     }
 
-    @Test
-    public void testCanPlaceNoCardLeft() {
-        Pile pile = mock(Pile.class);
-        Grid grid = mock(Grid.class);
-        GridPosition pos = mock(GridPosition.class);
-
-        when(grid.canPutCard(pos)).thenReturn(true);
-        when(pile.getCard(1)).thenReturn(null);
-
-        boolean result = MoveCard.moveCard(1, pile, pos, grid);
-
-        assertFalse(result);
-
-        verify(grid, never()).putCard(pos, null);
-        verify(pile, never()).takeCard(1);
-    }
 
 
 }

@@ -12,7 +12,20 @@ public class ProcessAction {
             return false;
         }
 
-        // verify neccesary things based on the rules
+        // checks if all the earned resources are placed on the calling card
+        GridPosition gp = null;
+        for(int x = -2; x < 3; x++){
+            for(int y = -2; y < 3; y++){
+                if(grid.getCard(new GridPosition(x, y)) == card) {
+                    gp = new GridPosition(x, y);
+                }
+            }
+        }
+        for (Pair<Resource,GridPosition> out : outputs) {
+            if(!out.getRight().equals(gp)) {
+                return false;
+            }
+        }
 
 
         return ProcessActionBase.activateCard(card,grid,inputs,outputs,pollution,false);

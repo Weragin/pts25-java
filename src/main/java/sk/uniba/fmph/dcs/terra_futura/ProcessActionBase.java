@@ -116,6 +116,7 @@ public class ProcessActionBase {
             return false;
         }
 
+        //check if all resources and places all available
         if(!canGetResources(grid, gridResourcesIn) || 
            !canPutResources(grid, gridResourcesOut, gridResourcesPollution)){
             return false;

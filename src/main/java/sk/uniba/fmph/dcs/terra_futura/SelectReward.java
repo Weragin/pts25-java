@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 public class SelectReward {
-    private Set<Integer> player;
-    private List<Resource> selection;
+    private final Set<Integer> player;
+    private final List<Resource> selection;
 
     public SelectReward() {
         this.player = new HashSet<>();

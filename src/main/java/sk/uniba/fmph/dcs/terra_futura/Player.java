@@ -22,19 +22,19 @@ public final class Player implements TerraFuturaObserver {
         this.gameState = "";
     }
 
-    private ScoringMethod getScoringMethod1() {
+    public ScoringMethod getScoringMethod1() {
         return this.scoringMethod1;
     }
 
-    private ScoringMethod getScoringMethod2() {
+    public ScoringMethod getScoringMethod2() {
         return this.scoringMethod2;
     }
 
-    private ActivationPattern getActivationPattern1() {
+    public ActivationPattern getActivationPattern1() {
         return this.activationPattern1;
     }
 
-    private ActivationPattern getActivationPattern2() {
+    public ActivationPattern getActivationPattern2() {
         return this.activationPattern2;
     }
 

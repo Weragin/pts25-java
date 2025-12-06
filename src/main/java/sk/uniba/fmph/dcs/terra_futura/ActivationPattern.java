@@ -10,7 +10,7 @@ import java.util.Collection;
 
 
 public final class ActivationPattern {
-    private ArrayList<SimpleEntry<Integer, Integer>> pattern;
+    private final ArrayList<SimpleEntry<Integer, Integer>> pattern;
     private boolean selected;
     private ActivateGrid grid;
 

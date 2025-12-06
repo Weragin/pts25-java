@@ -23,6 +23,8 @@ public class Game implements TerraFuturaInterface {
 
     private final SelectReward selectReward;
 
+    private final GameObserver gameObserver;
+    private final Map<Integer, String> playerMessage;
     private int assistingPlayer = -1;
 
     public Game(final List<Integer> players,
@@ -52,34 +54,48 @@ public class Game implements TerraFuturaInterface {
                     playerScoringMethods.get(player).getRight())
             );
         }
+
+
+        gameObserver = new GameObserver();
+        playerMessage = new HashMap<>();
         // TODO SOMETHING WITH OBSERVERS?
         selectReward = new SelectReward();
+
+
+       messageAllPlayers("Game started");
     }
 
     @Override
     public boolean discardLastCardFromDeck(int playerId, Deck deck) {
         // wrong state
         if (state != GameState.TakeCardNoCardDiscarded) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
         // wrong player
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
 
         Pile pileToDiscardFrom = getPile(deck);
         pileToDiscardFrom.removeLastCard();
         state = GameState.TakeCardCardDiscarded;
+
+
+
         return true;
     }
 
     @Override
     public boolean takeCard(int playerId, CardSource source, GridPosition gridCoordinate) {
         if (state != GameState.TakeCardNoCardDiscarded && state != GameState.TakeCardCardDiscarded) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
 
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
 
@@ -88,6 +104,7 @@ public class Game implements TerraFuturaInterface {
         Grid grid = playerReferences.get(playerId).getGrid();
         if (MoveCard.moveCard(source.getIndex(), activePile, gridCoordinate, grid)) {
             state = GameState.ActivateCard;
+            messageSpecificPlayer(playerId,"Card moved successfully");
             return true;
         }
         return false;
@@ -100,21 +117,25 @@ public class Game implements TerraFuturaInterface {
         // activate card with assistance
         // wrong state
         if (state != GameState.ActivateCard) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return;
         }
 
         // the assisting player should be someone else
         if (playerId == otherPlayerId) {
+            messageSpecificPlayer(playerId, "The assisting player should be someone else");
             return;
         }
 
         // wrong player
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "You can't do this in the last round");
             return;
         }
         Player nowPlaying = playerReferences.get(playerId);
         // card has no assistance, then we cant assist
         if (!card.hasAssistance()) {
+            messageSpecificPlayer(playerId, "TO use card assistance you need to have a card with assistance");
             return;
         }
         // wrong turn
@@ -123,6 +144,7 @@ public class Game implements TerraFuturaInterface {
         if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs, pollution)) {
             state = GameState.SelectReward;
             assistingPlayer = otherPlayerId;
+            messageSpecificPlayer(playerId, "Card activated with assistance");
         }
     }
 
@@ -131,21 +153,25 @@ public class Game implements TerraFuturaInterface {
         // activate card without assistance
         // wrong state
         if (state != GameState.ActivateCard) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return;
         }
 
         // not player on turn
         if (playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return;
         }
         // wrong turn
         if (!turnCheck()) {
+            messageSpecificPlayer(playerId, "You can't do this action after the last roun ");
             return;
         }
 
         Player nowPlaying = playerReferences.get(playerId);
         if (ProcessAction.activateCard(card, nowPlaying.getGrid(), inputs, outputs, pollution)) {
             state = GameState.ActivateCard;
+            messageSpecificPlayer(playerId, "Card activated successfully without assistance");
         }
     }
 
@@ -153,20 +179,24 @@ public class Game implements TerraFuturaInterface {
     public void selectReward(int playerId, Resource resource) {
 
         if (state != GameState.SelectReward) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return;
         }
         // the assisting player should get the reward
         if (playerId != assistingPlayer) {
+            messageSpecificPlayer(playerId, "The assisting player should get the reward");
             return;
         }
 
         if (!selectReward.canSelectReward(playerId, resource)) {
+            messageSpecificPlayer(playerId, "Can select the desired reward");
             return;
         }
 
         if (selectReward.selectReward(playerId, resource)) {
             state = GameState.ActivateCard;
             assistingPlayer = -1;
+            messageSpecificPlayer(playerId, "Reward selected successfully");
         }
 
 
@@ -175,10 +205,12 @@ public class Game implements TerraFuturaInterface {
     @Override
     public boolean turnFinished(int playerId) {
         if (state != GameState.SelectScoringMethod) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
 
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
 
@@ -200,23 +232,28 @@ public class Game implements TerraFuturaInterface {
     @Override
     public boolean selectActivationPattern(int playerId, Card card) {
         if (state != GameState.ActivateCard && state != GameState.SelectActivationPattern) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
 
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
         state = GameState.SelectActivationPattern;
+        messageSpecificPlayer(playerId, "Activation pattern selected successfully");
         return true;
     }
 
     @Override
     public boolean selectScoring(int playerId, Card card) {
         if (state != GameState.ActivateCard && state != GameState.SelectScoringMethod) {
+            messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
 
         if (!playerOnTurnCheck(playerId)) {
+            messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
 
@@ -247,6 +284,20 @@ public class Game implements TerraFuturaInterface {
 
     private boolean playerOnTurnCheck(int playerId) {
         return playerId == onTurn;
+    }
+
+    private void messageSpecificPlayer(int id, String message){
+        playerMessage.clear();
+        playerMessage.put(id, message);
+        gameObserver.notifyAll(playerMessage);
+    }
+
+    private void messageAllPlayers( String message){
+        playerMessage.clear();
+        for(int player: players){
+            playerMessage.put(player, message);
+        }
+        gameObserver.notifyAll(playerMessage);
     }
 
 }

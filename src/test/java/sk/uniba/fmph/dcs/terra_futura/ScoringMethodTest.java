@@ -64,7 +64,7 @@ class ScoringMethodTest {
         CardInterface card8 = new TestCard();
         CardInterface card9 = new TestCard();
 
-        card1.putResources(List.of(Resource.Polution, Resource.Polution));
+        card1.putResources(List.of(Resource.Pollution, Resource.Pollution));
         card2.putResources(List.of(Car, Car));
         card3.putResources(List.of(Resource.Yellow));
         card4.putResources(List.of(Resource.Money));

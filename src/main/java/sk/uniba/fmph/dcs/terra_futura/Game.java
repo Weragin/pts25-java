@@ -45,11 +45,11 @@ public class Game implements TerraFuturaInterface {
                 throw new IllegalArgumentException("Player " + player + " has no scoringmethods or activationpattern");
             }
 
-            playerReferences.put(player, new Player(
-                    playerScoringMethods.get(player).getLeft(),
-                    playerScoringMethods.get(player).getRight(),
+            playerReferences.put(player, new Player(new Grid(),
                     playerActivationPatterns.get(player).getLeft(),
-                    playerActivationPatterns.get(player).getRight())
+                    playerActivationPatterns.get(player).getRight(),
+                    playerScoringMethods.get(player).getLeft(),
+                    playerScoringMethods.get(player).getRight())
             );
         }
         // TODO SOMETHING WITH OBSERVERS?

@@ -58,7 +58,7 @@ public class Game implements TerraFuturaInterface {
 
         gameObserver = new GameObserver();
         playerMessage = new HashMap<>();
-        // TODO SOMETHING WITH OBSERVERS?
+
         selectReward = new SelectReward();
 
 

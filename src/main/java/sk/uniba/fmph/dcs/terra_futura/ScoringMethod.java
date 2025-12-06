@@ -6,13 +6,13 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScoringMethod {
-    private final Grid grid;
+    private final GridInterface grid;
     private final List<Resource> resources;
     private final List<Integer> requiredNumbersOfResources;
     private final Points pointsPerCombination;
     private Points calculatedTotal;
 
-    public ScoringMethod(Grid grid, List<Resource> resources, List<Integer> requiredNumbersOfResources, Points pointsPerCombination) {
+    public ScoringMethod(GridInterface grid, List<Resource> resources, List<Integer> requiredNumbersOfResources, Points pointsPerCombination) {
         if (resources.size() != requiredNumbersOfResources.size()) {
             throw new IllegalArgumentException("resources and count must be of the same size");
         }
@@ -32,11 +32,20 @@ public class ScoringMethod {
 
     private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos, AtomicInteger pollutionCount) {
         List<Resource> resourcesOnCard = new ArrayList<>();
-        Card card = grid.getCard(pos);
+        CardInterface card = grid.getCard(pos);
         card.getResources(resourcesOnCard);
-        if (grid.canBeActivated(pos)) {
-            for (Resource r : resourcesOnCard) {
-                playersResources.put(r, playersResources.get(r)+1);
+        for (Resource r : resourcesOnCard) {
+            playersResources.replace(r, playersResources.get(r)+1);
+        }
+    }
+
+    private void countPollutionOnCard(Map<Resource,Integer> playersResources, GridPosition pos) {
+        List<Resource> resourcesOnCard = new ArrayList<>();
+        CardInterface card = grid.getCard(pos);
+        card.getResources(resourcesOnCard);
+        for (Resource r : resourcesOnCard) {
+            if (r == Resource.Pollution) {
+                playersResources.replace(r,playersResources.get(Resource.Pollution)+1);
             }
         }
         if (resourcesOnCard.contains(Resource.Polution)) {
@@ -76,7 +85,7 @@ public class ScoringMethod {
         total += playersResources.get(Resource.Bulb)*5;
         total += playersResources.get(Resource.Gear)*5;
         total += playersResources.get(Resource.Car)*6;
-        total -= pollutionCount.get();
+        total -= playersResources.get(Resource.Pollution);
 
         calculatedTotal = new Points(total);
     }

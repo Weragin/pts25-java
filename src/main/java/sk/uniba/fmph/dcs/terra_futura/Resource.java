@@ -8,5 +8,5 @@ public enum Resource {
     Gear,
     Car,
     Money,
-    Polution
+    Pollution
 }

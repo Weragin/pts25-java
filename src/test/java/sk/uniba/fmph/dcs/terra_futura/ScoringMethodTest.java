@@ -9,7 +9,7 @@ import static sk.uniba.fmph.dcs.terra_futura.Resource.Gear;
 
 class ScoringMethodTest {
 
-    private static class TestCard implements Card {
+    private static class TestCard implements CardInterface {
         private final List<Resource> resources = new ArrayList<>();
 
         @Override
@@ -23,8 +23,8 @@ class ScoringMethodTest {
         }
     }
 
-    private static class TestGrid implements Grid {
-        private final Map<GridPosition, Card> cards = new HashMap<>();
+    private static class TestGrid implements GridInterface {
+        private final Map<GridPosition, CardInterface> cards = new HashMap<>();
         private final Set<GridPosition> active = new HashSet<>();
 
         @Override
@@ -38,7 +38,7 @@ class ScoringMethodTest {
         }
 
         @Override
-        public void putCard(GridPosition coordinate, Card card) {
+        public void putCard(GridPosition coordinate, CardInterface card) {
             cards.put(coordinate, card);
         }
 
@@ -52,17 +52,17 @@ class ScoringMethodTest {
     @Test
     void testScoring01() {
 
-        Grid grid = new TestGrid();
+        GridInterface grid = new TestGrid();
 
-        Card card1 = new TestCard();
-        Card card2 = new TestCard();
-        Card card3 = new TestCard();
-        Card card4 = new TestCard();
-        Card card5 = new TestCard();
-        Card card6 = new TestCard();
-        Card card7 = new TestCard();
-        Card card8 = new TestCard();
-        Card card9 = new TestCard();
+        CardInterface card1 = new TestCard();
+        CardInterface card2 = new TestCard();
+        CardInterface card3 = new TestCard();
+        CardInterface card4 = new TestCard();
+        CardInterface card5 = new TestCard();
+        CardInterface card6 = new TestCard();
+        CardInterface card7 = new TestCard();
+        CardInterface card8 = new TestCard();
+        CardInterface card9 = new TestCard();
 
         card1.putResources(List.of(Resource.Polution, Resource.Polution));
         card2.putResources(List.of(Car, Car));

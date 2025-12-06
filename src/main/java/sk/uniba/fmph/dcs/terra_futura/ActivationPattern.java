@@ -1,20 +1,20 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
 
 
 
 public final class ActivationPattern {
     private ArrayList<SimpleEntry<Integer, Integer>> pattern;
     private boolean selected;
-    private InterfaceActivateGrid grid;
+    private ActivateGrid grid;
 
-    public ActivationPattern(final InterfaceActivateGrid grid, final Collection<SimpleEntry<Integer, Integer>> pattern) {
+    public ActivationPattern(final ActivateGrid grid, final Collection<SimpleEntry<Integer, Integer>> pattern) {
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;

@@ -1,5 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import java.util.Objects;
+
 public final class GridPosition {
     private final int x;
     private final int y;
@@ -25,6 +27,21 @@ public final class GridPosition {
 
     public int getY() {
         return y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if ((o == null) || this.getClass() != o.getClass()) {
+            return false;
+        }
+        GridPosition that = (GridPosition) o;
+        return this.x == that.x && this.y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x,y);
     }
 
     @Override

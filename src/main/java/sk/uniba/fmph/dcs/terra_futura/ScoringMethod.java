@@ -3,6 +3,7 @@ package sk.uniba.fmph.dcs.terra_futura;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScoringMethod {
     private final GridInterface grid;
@@ -29,7 +30,7 @@ public class ScoringMethod {
         return grid.getCard(pos) != null;
     }
 
-    private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos) {
+    private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos, AtomicInteger pollutionCount) {
         List<Resource> resourcesOnCard = new ArrayList<>();
         CardInterface card = grid.getCard(pos);
         card.getResources(resourcesOnCard);
@@ -47,6 +48,9 @@ public class ScoringMethod {
                 playersResources.replace(r,playersResources.get(Resource.Pollution)+1);
             }
         }
+        if (resourcesOnCard.contains(Resource.Polution)) {
+            pollutionCount.incrementAndGet();
+        }
     }
 
     public void selectThisMethodAndCalculate() {
@@ -55,16 +59,13 @@ public class ScoringMethod {
         for (Resource r : Resource.values()) {
             playersResources.put(r,0);
         }
+        AtomicInteger pollutionCount = new AtomicInteger(0);
 
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
                 GridPosition pos = new GridPosition(x,y);
-                if (canGetCard(pos) && grid.canBeActivated(pos)) {
-                    countResourcesOnCard(playersResources, pos);
-                } else if (canGetCard(pos)) {
-                    countPollutionOnCard(playersResources, pos);
-                } else {
-                    continue;
+                if (canGetCard(pos)) {
+                    countResourcesOnCard(playersResources, pos, pollutionCount);
                 }
             }
         }
@@ -94,7 +95,7 @@ public class ScoringMethod {
 
         jsonObject.put("Resources: ", resources.toString());
         jsonObject.put("Required number of resources: ", requiredNumbersOfResources.toString());
-        jsonObject.put("Points per combination: ", pointsPerCombination);
+        jsonObject.put("Points per combination: ", pointsPerCombination.getPoints());
         jsonObject.put("Calculated total: ", calculatedTotal == null ? JSONObject.NULL : calculatedTotal.getPoints());
 
         return jsonObject.toString();

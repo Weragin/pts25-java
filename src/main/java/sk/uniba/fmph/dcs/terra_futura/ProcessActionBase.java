@@ -58,7 +58,7 @@ public class ProcessActionBase {
             if(gridCard == null){
                 return false;
             }
-            if(!gridCard.canGetResources(gridResourcesIn.get(gridPosition))){
+            if(!gridCard.canTakeResources(gridResourcesIn.get(gridPosition))){
                 return false;
             }
         }
@@ -108,7 +108,7 @@ public class ProcessActionBase {
             if(!gridResourcesPollution.containsKey(gridPosition)){
                 gridResourcesPollution.put(gridPosition,new ArrayList<>());
             }
-            gridResourcesPollution.get(gridPosition).add(Resource.Polution);
+            gridResourcesPollution.get(gridPosition).add(Resource.Pollution);
         }
 
 

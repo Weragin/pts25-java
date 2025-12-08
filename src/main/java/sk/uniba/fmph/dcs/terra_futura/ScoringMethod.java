@@ -30,7 +30,7 @@ public class ScoringMethod {
         return grid.getCard(pos) != null;
     }
 
-    private void countResourcesOnCard(Map<Resource,Integer> playersResources, GridPosition pos, AtomicInteger pollutionCount) {
+    private void addResourcesFromCard(Map<Resource,Integer> playersResources, GridPosition pos, AtomicInteger pollutionCount) {
         List<Resource> resourcesOnCard = new ArrayList<>();
         Card card = grid.getCard(pos);
         card.getResources(resourcesOnCard);
@@ -56,7 +56,7 @@ public class ScoringMethod {
             for (int y = -2; y <= 2; y++) {
                 GridPosition pos = new GridPosition(x,y);
                 if (canGetCard(pos)) {
-                    countResourcesOnCard(playersResources, pos, pollutionCount);
+                    addResourcesFromCard(playersResources, pos, pollutionCount);
                 }
             }
         }

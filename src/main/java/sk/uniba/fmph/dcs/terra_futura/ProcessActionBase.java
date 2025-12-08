@@ -122,7 +122,7 @@ public class ProcessActionBase {
             return false;
         }
 
-        if(card.check(convertToResources(inputs), convertToResources(outputs), pollution.size()) ||
+        if(card.checkUpper(convertToResources(inputs), convertToResources(outputs), pollution.size()) ||
            card.checkLower(convertToResources(inputs), convertToResources(outputs), pollution.size())){
             putAllResources(grid,gridResourcesIn,gridResourcesOut,gridResourcesPollution);
         }

@@ -1,6 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-public class Grid{
+public class Grid {
 
     public Card getCard(GridPosition coordinate) {
         throw new UnsupportedOperationException("Kazdy sam implementuje.");

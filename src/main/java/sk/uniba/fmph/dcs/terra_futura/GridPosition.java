@@ -24,14 +24,14 @@ public final class GridPosition {
         return x;
     }
 
-
     public int getY() {
         return y;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
         if ((o == null) || this.getClass() != o.getClass()) {
             return false;
         }
@@ -41,7 +41,7 @@ public final class GridPosition {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x,y);
+        return Objects.hash(x, y);
     }
 
     @Override

@@ -261,9 +261,11 @@ public class Game implements TerraFuturaInterface {
         Player nowPlaying = playerReferences.get(playerId);
         if(activationPattern == 1){
             nowPlaying.getActivationPattern1().select();
+            nowPlaying.getGrid().setActivationPattern(nowPlaying.getActivationPattern1().getPattern());
         }
         else{
             nowPlaying.getActivationPattern2().select();
+            nowPlaying.getGrid().setActivationPattern(nowPlaying.getActivationPattern2().getPattern());
         }
 
         state = GameState.SelectScoringMethod;

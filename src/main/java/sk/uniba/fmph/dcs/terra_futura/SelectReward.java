@@ -13,16 +13,23 @@ public class SelectReward {
         this.player = new HashSet<>();
         this.selection = new ArrayList<>();
     }
+
     /**
-     * @param playerId the id of the player
-     * @param card the card granting the reward
-     * @param reward the reward you want to choose
+     * @param playerId
+     *            the id of the player
+     * @param card
+     *            the card granting the reward
+     * @param reward
+     *            the reward you want to choose
      */
     public void setReward(final int playerId, final Card card, final Resource reward) {
         throw new RuntimeException("Not implemented");
     }
+
     /**
-     * @param reward the reward you want to check if available
+     * @param reward
+     *            the reward you want to check if available
+     *
      * @return boolean if you can select it
      */
     public boolean canSelectReward(final int playerId, final Resource reward) {
@@ -30,7 +37,9 @@ public class SelectReward {
     }
 
     /**
-     * @param reward the reward to be chosen
+     * @param reward
+     *            the reward to be chosen
+     *
      * @return
      */
     public boolean selectReward(final int playerId, final Resource reward) {

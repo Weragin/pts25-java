@@ -28,9 +28,8 @@ public class Game implements TerraFuturaInterface {
     private int assistingPlayer = -1;
 
     public Game(final List<Integer> players,
-                final Map<Integer, Pair<ActivationPattern, ActivationPattern>> playerActivationPatterns,
-                final Map<Integer, Pair<ScoringMethod, ScoringMethod>> playerScoringMethods,
-                final int startingPlayer) {
+            final Map<Integer, Pair<ActivationPattern, ActivationPattern>> playerActivationPatterns,
+            final Map<Integer, Pair<ScoringMethod, ScoringMethod>> playerScoringMethods, final int startingPlayer) {
 
         state = GameState.TakeCardNoCardDiscarded;
         this.players = new ArrayList<>(players); //
@@ -47,22 +46,18 @@ public class Game implements TerraFuturaInterface {
                 throw new IllegalArgumentException("Player " + player + " has no scoringmethods or activationpattern");
             }
 
-            playerReferences.put(player, new Player(new Grid(),
-                    playerActivationPatterns.get(player).getLeft(),
-                    playerActivationPatterns.get(player).getRight(),
-                    playerScoringMethods.get(player).getLeft(),
-                    playerScoringMethods.get(player).getRight())
-            );
+            playerReferences.put(player,
+                    new Player(new Grid(), playerActivationPatterns.get(player).getLeft(),
+                            playerActivationPatterns.get(player).getRight(), playerScoringMethods.get(player).getLeft(),
+                            playerScoringMethods.get(player).getRight()));
         }
-
 
         gameObserver = new GameObserver();
         playerMessage = new HashMap<>();
 
         selectReward = new SelectReward();
 
-
-       messageAllPlayers("Game started");
+        messageAllPlayers("Game started");
     }
 
     @Override
@@ -81,8 +76,6 @@ public class Game implements TerraFuturaInterface {
         Pile pileToDiscardFrom = getPile(deck);
         pileToDiscardFrom.removeLastCard();
         state = GameState.TakeCardCardDiscarded;
-
-
 
         return true;
     }
@@ -104,16 +97,17 @@ public class Game implements TerraFuturaInterface {
         Grid grid = playerReferences.get(playerId).getGrid();
         if (MoveCard.moveCard(source.getIndex(), activePile, gridCoordinate, grid)) {
             state = GameState.ActivateCard;
-            messageSpecificPlayer(playerId,"Card moved successfully");
+            messageSpecificPlayer(playerId, "Card moved successfully");
             return true;
         }
         return false;
 
     }
 
-
     @Override
-    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, Card otherCard) {
+    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs,
+            List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId,
+            Card otherCard) {
         // activate card with assistance
         // wrong state
         if (state != GameState.ActivateCard) {
@@ -140,8 +134,8 @@ public class Game implements TerraFuturaInterface {
         }
         // wrong turn
 
-
-        if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs, pollution)) {
+        if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs,
+                pollution)) {
             state = GameState.SelectReward;
             assistingPlayer = otherPlayerId;
             messageSpecificPlayer(playerId, "Card activated with assistance");
@@ -149,7 +143,8 @@ public class Game implements TerraFuturaInterface {
     }
 
     @Override
-    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution) {
+    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs,
+            List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution) {
         // activate card without assistance
         // wrong state
         if (state != GameState.ActivateCard) {
@@ -199,7 +194,6 @@ public class Game implements TerraFuturaInterface {
             messageSpecificPlayer(playerId, "Reward selected successfully");
         }
 
-
     }
 
     @Override
@@ -227,7 +221,6 @@ public class Game implements TerraFuturaInterface {
         return true;
 
     }
-
 
     @Override
     public boolean selectActivationPattern(int playerId, Card card) {
@@ -286,15 +279,15 @@ public class Game implements TerraFuturaInterface {
         return playerId == onTurn;
     }
 
-    private void messageSpecificPlayer(int id, String message){
+    private void messageSpecificPlayer(int id, String message) {
         playerMessage.clear();
         playerMessage.put(id, message);
         gameObserver.notifyAll(playerMessage);
     }
 
-    private void messageAllPlayers( String message){
+    private void messageAllPlayers(String message) {
         playerMessage.clear();
-        for(int player: players){
+        for (int player : players) {
             playerMessage.put(player, message);
         }
         gameObserver.notifyAll(playerMessage);

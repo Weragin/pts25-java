@@ -59,8 +59,10 @@ public class Card implements CardInterface {
 
     public boolean canPutResources(List<Resource> resources) {
         List<Resource> theoreticalJoinedResources = Stream.concat(resourceStore.stream(), resources.stream()).toList();
-        List<Resource> withoutPollution = theoreticalJoinedResources.stream().filter(r -> r != Resource.Pollution).toList();
-        return withoutPollution.size() <= maxResourceCount && theoreticalJoinedResources.size() - withoutPollution.size() <= maxPollutionHealth;
+        List<Resource> withoutPollution = theoreticalJoinedResources.stream().filter(r -> r != Resource.Pollution)
+                .toList();
+        return withoutPollution.size() <= maxResourceCount
+                && theoreticalJoinedResources.size() - withoutPollution.size() <= maxPollutionHealth;
     }
 
     @Override

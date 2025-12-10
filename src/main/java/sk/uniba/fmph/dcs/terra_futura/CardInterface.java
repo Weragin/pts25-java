@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface CardInterface {
     void putResources(List<Resource> resources);
+
     void getResources(List<Resource> resources);
 }

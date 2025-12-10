@@ -4,9 +4,10 @@ public final class MoveCard {
     private MoveCard() {
         throw new AssertionError("Cannot instantiate utility class");
     }
+
     static boolean moveCard(final int index, final Pile pile, final GridPosition gridCoordinate, final Grid grid) {
         if (!grid.canPutCard(gridCoordinate)) {
-           return false;
+            return false;
         }
 
         Card card = pile.getCard(index);

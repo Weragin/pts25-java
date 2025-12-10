@@ -1,7 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 public class Pile {
-    //placeholder class
+    // placeholder class
     public final Card getCard(final int index) {
         throw new RuntimeException("Not implemented");
     }

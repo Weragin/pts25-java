@@ -26,6 +26,11 @@ public final class ActivationPattern {
         this.selected = true;
     }
 
+
+    public ArrayList<SimpleEntry<Integer, Integer>> getPattern(){
+        return new ArrayList<>(pattern);
+    }
+
     public boolean isSelected() {
         return this.selected;
     }

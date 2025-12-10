@@ -105,12 +105,10 @@ public class Game implements TerraFuturaInterface {
     }
 
     @Override
-    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs,
-            List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId,
-            Card otherCard) {
+    public void activateCard(int playerId, GridPosition card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution, int otherPlayerId, Card otherCard) {
         // activate card with assistance
         // wrong state
-        if (state != GameState.ActivateCard) {
+        if (state != GameState.ActivateCard || state != GameState.SelectScoringMethod) {
             messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return;
         }
@@ -133,9 +131,14 @@ public class Game implements TerraFuturaInterface {
             return;
         }
         // wrong turn
+        Grid grid = nowPlaying.getGrid();
+        if(!grid.canGetCard(card) || !grid.canBeActivated(card)){
+            return;
+        }
 
-        if (ProcessActionAssistance.activateCard(card, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs,
-                pollution)) {
+        Card cardFromGrid = grid.getCard(card);
+
+        if (ProcessActionAssistance.activateCard(cardFromGrid, nowPlaying.getGrid(), otherPlayerId, otherCard, inputs, outputs, pollution)) {
             state = GameState.SelectReward;
             assistingPlayer = otherPlayerId;
             messageSpecificPlayer(playerId, "Card activated with assistance");
@@ -143,11 +146,10 @@ public class Game implements TerraFuturaInterface {
     }
 
     @Override
-    public void activateCard(int playerId, Card card, List<Pair<Resource, GridPosition>> inputs,
-            List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution) {
+    public void activateCard(int playerId, GridPosition card, List<Pair<Resource, GridPosition>> inputs, List<Pair<Resource, GridPosition>> outputs, List<GridPosition> pollution) {
         // activate card without assistance
         // wrong state
-        if (state != GameState.ActivateCard) {
+        if (state != GameState.ActivateCard && || state != GameState.SelectScoringMethod ) {
             messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return;
         }
@@ -164,7 +166,15 @@ public class Game implements TerraFuturaInterface {
         }
 
         Player nowPlaying = playerReferences.get(playerId);
-        if (ProcessAction.activateCard(card, nowPlaying.getGrid(), inputs, outputs, pollution)) {
+
+        Grid grid = nowPlaying.getGrid();
+        if (!grid.canGetCard(card) || !grid.canBeActivated(card)){
+            return;
+        }
+
+        Card cardFromGrid = grid.getCard(card);
+
+        if (ProcessAction.activateCard(cardFromGrid, nowPlaying.getGrid(), inputs, outputs, pollution)) {
             state = GameState.ActivateCard;
             messageSpecificPlayer(playerId, "Card activated successfully without assistance");
         }
@@ -198,7 +208,7 @@ public class Game implements TerraFuturaInterface {
 
     @Override
     public boolean turnFinished(int playerId) {
-        if (state != GameState.SelectScoringMethod) {
+        if (state != GameState.ActivateCard  ) {
             messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
@@ -208,7 +218,7 @@ public class Game implements TerraFuturaInterface {
             return false;
         }
 
-        state = GameState.Finish;
+
         // get next player,
         getNextPlayer();
 
@@ -223,8 +233,8 @@ public class Game implements TerraFuturaInterface {
     }
 
     @Override
-    public boolean selectActivationPattern(int playerId, Card card) {
-        if (state != GameState.ActivateCard && state != GameState.SelectActivationPattern) {
+    public boolean selectActivationPattern(int playerId, int activationPattern) {
+        if (state != GameState.SelectActivationPattern) {
             messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
@@ -233,14 +243,29 @@ public class Game implements TerraFuturaInterface {
             messageSpecificPlayer(playerId, "It's not your turn");
             return false;
         }
-        state = GameState.SelectActivationPattern;
+
+        if(activationPattern != 1 && activationPattern != 2){
+            messageSpecificPlayer(playerId, "You should choose between the two activation patterns");
+            return false;
+        }
+        Player nowPlaying = playerReferences.get(playerId);
+        if(activationPattern == 1){
+            nowPlaying.getActivationPattern1().select();
+            nowPlaying.getGrid().setActivationPattern(nowPlaying.getActivationPattern1().getPattern());
+        }
+        else{
+            nowPlaying.getActivationPattern2().select();
+            nowPlaying.getGrid().setActivationPattern(nowPlaying.getActivationPattern2().getPattern());
+        }
+
+        state = GameState.SelectScoringMethod;
         messageSpecificPlayer(playerId, "Activation pattern selected successfully");
         return true;
     }
 
     @Override
-    public boolean selectScoring(int playerId, Card card) {
-        if (state != GameState.ActivateCard && state != GameState.SelectScoringMethod) {
+    public boolean selectScoring(int playerId, int scoringCard) {
+        if (state != GameState.SelectScoringMethod) {
             messageSpecificPlayer(playerId, "You are in the wrong state for this");
             return false;
         }
@@ -250,7 +275,27 @@ public class Game implements TerraFuturaInterface {
             return false;
         }
 
-        state = GameState.SelectScoringMethod;
+
+        if(scoringCard != 1 && scoringCard != 2){
+            messageSpecificPlayer(playerId, "You should choose between the two scoring methods");
+            return false;
+        }
+        Player nowPlaying = playerReferences.get(playerId);
+        if(scoringCard == 1){
+            nowPlaying.getScoringMethod1().selectThisMethodAndCalculate();
+        }
+        else{
+            nowPlaying.getScoringMethod2().selectThisMethodAndCalculate();
+        }
+
+        getNextPlayer();
+        if(playerOnTurnCheck(startingPlayer)){
+            state = GameState.Finish
+        }
+        else{
+            state = GameState.SelectActivationPattern;
+        }
+
         return true;
     }
 

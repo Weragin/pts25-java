@@ -7,8 +7,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
-
 public final class ActivationPattern {
     private final ArrayList<SimpleEntry<Integer, Integer>> pattern;
     private boolean selected;
@@ -16,7 +14,7 @@ public final class ActivationPattern {
 
     public ActivationPattern(final ActivateGrid grid, final Collection<SimpleEntry<Integer, Integer>> pattern) {
         this.grid = grid;
-        this.pattern = new ArrayList<>(pattern);  // copy the pattern
+        this.pattern = new ArrayList<>(pattern); // copy the pattern
         this.selected = false;
     }
 
@@ -29,14 +27,17 @@ public final class ActivationPattern {
     }
 
 
+    public ArrayList<SimpleEntry<Integer, Integer>> getPattern(){
+        return new ArrayList<>(pattern);
+    }
+
     public boolean isSelected() {
         return this.selected;
     }
 
-
     public String state() {
         JSONArray patternList = new JSONArray();
-        for (SimpleEntry<Integer, Integer> entry: pattern) {
+        for (SimpleEntry<Integer, Integer> entry : pattern) {
             JSONObject pair = new JSONObject();
             pair.put("x", entry.getKey());
             pair.put("y", entry.getValue());

@@ -6,7 +6,6 @@ import org.mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
 public class MoveCardTest {
 
     @Test
@@ -44,7 +43,5 @@ public class MoveCardTest {
         verify(grid, never()).putCard(pos, card);
         verify(pile, never()).takeCard(1);
     }
-
-
 
 }

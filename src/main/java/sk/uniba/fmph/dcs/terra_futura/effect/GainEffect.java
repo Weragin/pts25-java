@@ -1,12 +1,14 @@
 package sk.uniba.fmph.dcs.terra_futura.effect;
 
+import org.json.JSONObject;
 import sk.uniba.fmph.dcs.terra_futura.Resource;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GainEffect implements Effect {
     /**
-     * Represents a gain effect without choices, e.g. putting a single output resource on the card
+     * Represents a gain effect without choices, i.e. putting a single output resource on the card
      */
     private final Resource output;
 
@@ -16,8 +18,7 @@ public class GainEffect implements Effect {
 
     @Override
     public boolean check(List<Resource> input, List<Resource> output, int pollution) {
-        // Since gain effects have no requirements on available resources, we do not check the contents of input
-        return output.size() == 1 && output.getFirst().equals(this.output);
+        return (Collections.frequency(output, this.output) == Collections.frequency(input, this.output) + 1);
     }
 
     @Override
@@ -27,9 +28,9 @@ public class GainEffect implements Effect {
 
     @Override
     public String state() {
-        org.json.JSONObject json = new org.json.JSONObject();
+        JSONObject json = new JSONObject();
         json.put("input", new int[] {});
-
+        json.put("output", new Resource[] {output});
         return json.toString();
     }
 }

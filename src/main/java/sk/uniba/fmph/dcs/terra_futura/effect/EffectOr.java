@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EffectOr implements Effect {
     /**
-     * Represents a choice exchange effect, e.g. the player chooses one effect from a list of effects
+     * Represents a choice exchange effect, i.e. the player chooses one effect from a list of effects
      */
     private final List<Effect> effectList;
 

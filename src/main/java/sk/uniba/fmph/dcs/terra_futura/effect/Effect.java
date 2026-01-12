@@ -17,8 +17,8 @@ public interface Effect {
     boolean hasAssistance();
 
     /**
-     * Gives the state of an effect, which is always either a json  object with a (possibly empty) input list
-     * and a (non-empty) output list, or a json list of such objects.
+     * Gives the state of an effect, which is always either a json  object with a (possibly empty) input list,
+     * a (non-empty) output list and the pollution number, or a json list of such objects.
      * @return string representing the state's json object
      */
     String state();

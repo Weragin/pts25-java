@@ -18,7 +18,10 @@ public class GainEffect implements Effect {
 
     @Override
     public boolean check(List<Resource> input, List<Resource> output, int pollution) {
-        return (Collections.frequency(output, this.output) == Collections.frequency(input, this.output) + 1);
+        return pollution == 0 &&
+                input.isEmpty() &&
+                output.size() == 1 &&
+                output.getFirst() == this.output;
     }
 
     @Override
@@ -31,6 +34,7 @@ public class GainEffect implements Effect {
         JSONObject json = new JSONObject();
         json.put("input", new int[] {});
         json.put("output", new Resource[] {output});
+        json.put("pollution", 0);
         return json.toString();
     }
 }

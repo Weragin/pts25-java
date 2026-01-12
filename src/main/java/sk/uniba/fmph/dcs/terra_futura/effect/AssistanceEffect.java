@@ -21,6 +21,7 @@ public class AssistanceEffect implements Effect {
         JSONObject json = new JSONObject();
         json.put("input", new int[] {});
         json.put("output", new String[] {"Assistance"});
+        json.put("pollution", 0);
         return json.toString();
     }
 }
